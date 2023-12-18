@@ -1,0 +1,255 @@
+:root{
+    --azul_uno : #5086c1;
+    --azul_dos : #6a9eda;
+    --azul_tres: #84b6f4;
+    --azul_cuatro: #b2dafa;
+    --azul_cinco : #dcffff;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--azul_uno);
+}
+
+.textarea{
+    background-color: #D9D9D6;
+}
+
+
+/* FALTAUNOOOOOOOOOOOOOOOOOOOOOO */
+input{
+    margin: 7px;
+    padding: 2px;
+}
+
+h1,h2{
+    font-size: 36px;
+    color: whitesmoke;
+    text-align: center;
+}
+.container{
+    margin: 0;
+    padding: 0;
+}
+.container__fluid{
+    margin: 0;
+    padding: 0;
+}
+.row{
+    margin: 0;
+    padding: 0;
+}
+.col{
+    margin: 0;
+    padding: 0;
+}
+
+/* BARRA DE NAVEGACION INICIAL */
+.barra{
+    background-color: var(--azul_tres);
+}
+
+.logo{
+    min-width: 5vw;
+    max-width: 10vw;
+    display: inline-block;
+}
+.nav{
+    margin: 0;
+    padding: 0;  
+}
+.navbar .navbar-expand-lg{
+    margin: 0;
+    padding: 0;
+}
+/* /BARRA DE NAVEGACION INICIAL */
+
+/* INTRODUCCION */
+.introduccion{
+    margin: 20px auto;
+
+}
+.introduccion > .row > .col > h1 , p{
+    color: whitesmoke;
+    text-align: center;
+}
+hr{
+    color: var(--azul_cinco);
+}
+.introduccion > .row > .col > p{
+    text-align: justify;
+}
+/* /INTRODUCCION */
+
+/* REGISTRO */
+.registro{
+    margin: 20px auto;
+}
+.registro > .row > .col > h2{
+    text-align: center;
+    color: whitesmoke;
+
+}
+
+.formularios_registro{
+    background-color: var(--azul_dos);
+    display: flex;
+    flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: center;
+	align-content: center;
+    padding: 5vh 0 5vh 0;
+    border-radius: 20px;
+    border: solid 3px var(--azul_tres);
+    margin: 10px auto 10px auto;
+    height: 115vh;
+}
+
+.formularios{
+    margin: 10px auto 10px auto;
+}
+
+.boton_registro{
+    margin: 10px auto 10px auto;
+}
+/* /REGISTRO */
+
+
+/* FOOTER */
+footer{
+    padding: 5vh;
+    background-color: #191919;
+    margin-top: 30px;
+    
+}
+
+footer > div > div > h2{
+    text-align: center;
+    color: whitesmoke;
+}
+/* /FOOTER */
+
+/* PERFIL USUARIO */
+.contenedor_comentarios{
+    margin: 0;
+    padding: 0;
+    display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+ul{
+    list-style: none;
+    margin:  20px auto 20px auto;
+    margin: 0;
+    padding: 0; 
+}
+
+.comentarios{
+    width: 80vw;
+    
+}
+
+.plantilla_comentario{
+    background-color: var(--azul_dos);
+    padding: 3vh 1vw 3vh 1vw ;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-radius: 25px;
+    box-shadow: inset 6px 6px 20px -1px #5086c1,
+        inset -6px -6px 20px -1px #5086c1;
+}
+
+.hearder_comentario{
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	align-content: space-between;
+}
+.avatar_chico{
+    height: 50px;
+    border-radius: 25px;
+}
+
+/* Perfil Usuario */
+
+.perfil{
+    /* margin-top: 30px; */
+    margin: 30px auto 0 auto;
+    width: 80vw;
+    background-color: purple;
+    display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+    padding: 20px;
+    border-radius: 20px;
+    
+}
+
+.avatar_perfil{
+    border-radius: 100%;
+    width: 20vw;
+    border: solid 10px var(--azul_tres);
+}
+
+.nombre{
+    color: whitesmoke;
+    font-size: 30px;
+    text-align: center;
+}
+
+.atributos{
+    margin-top: 20px;
+}
+li{
+    color: #dcffff;
+    font-size: 15px;
+    text-align: center;
+}
+/* /PERFIL USUARIO */
+
+/* MURO PRINCIPAL */
+.comentarios_muro_principal{
+    margin: 0 auto;
+}
+/* MURO /PRINCIPAL */
+
+.posteo{
+    background-color: var(--azul_dos);
+    margin: 30px auto 30px auto;
+
+}
+
+.contenedor_comentario{
+    display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: space-evenly;
+	align-items: center;
+	align-content: flex-end;
+    border-radius: 20px;
+
+}
+textarea{
+    border-radius: 20px;
+}
+textarea , button{
+    margin: 10px auto;
+}
+
+.comentarios_muro_general{
+    margin: 0 auto;
+    /* width: 50vw; */
+}
+
+/* FALTAUNOOOOOOOOOOOOOOOOOOOOOO */

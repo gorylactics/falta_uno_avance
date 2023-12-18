@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+    {% if request.session.usuario %}
+        {% include 'menu.html' %}
+    {% endif %}
+
+    <section class="container__fluid">
+        <div class="row">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 perfil">
+                <!-- Contenido del perfil... -->
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <h5>Total mensajes creados: {{ cantMensajes }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total comentarios creados: {{ cantComentarios }}</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 w-50">
+                <form action="crearMensaje/{{ request.session.usuario.id }}" method="post">
+                    {% csrf_token %}
+                    <h2>Post a message</h2>
+                    <textarea name="mensaje" class="w-100 h-100 form-control textarea" rows="5"></textarea>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                        <button type="submit" class="btn btn-primary text-light">Post a message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 w-100">
+                {% for mensaje in mensajes %}
+                    <p class="text-secondary"><b>Total de mensajes a la fecha: {{ mensajes|length }}</b></p>
+                    <h5>El {{ mensaje.created_at|date:"d.M.y" }} {{ mensaje.usuario.first_name }} dijo:</h5>
+                    <p class="text-light mx-3">{{ mensaje.mensaje }}</p>
+                    <div class="comentario mx-5">
+                        {% for comentario in mensaje.comentarios_mensaje.all %}
+                            <p><b>{{ comentario.created_at|date:"d.M.y" }} {{ comentario.usuario.first_name }} Respondio: </b></p>
+                            <p class="mx-5 text-light">{{ comentario.comentario }}</p>
+                        {% empty %}
+                            <p class="mx-5 text-light"><b>Sin comentarios</b></p>
+                        {% endfor %}
+                        <hr class="w-50">
+                        <p class="text-secondary">Comentarios: {{ mensaje.comentarios_mensaje.all|length }}</p>
+                    </div>
+                    <div class="comentar">
+                        <form action="crearComentario/{{ mensaje.id }}" method="POST">
+                            {% csrf_token %}
+                            <h5>Post a comment</h5>
+                            <textarea name="comentario" class="w-50 form-control h-100 mt-2 mb-4 textarea" rows="3"></textarea>
+                            <div class="d-flex justify-content-end w-50">
+                                <button type="submit" class="btn btn-primary text-light">Post a Comment</button>
+                                {% if request.session.usuario.id == mensaje.usuario.id %}
+                                    <a href="delete/{{ mensaje.id }}" class="btn btn-danger text-light mx-2">Delete a message</a>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                    <hr class="w-50">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

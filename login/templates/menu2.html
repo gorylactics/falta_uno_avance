@@ -1,0 +1,30 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg barra container__fluid ml-auto">
+    <div class="row w-100">
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 logotipo">
+            <a class="navbar-brand" href="{% url "index" %}">
+                <img    src="{% static '../static/img/logofalta1.png' %}" 
+                        alt="logo_falta_uno" 
+                        srcset=""
+                        class="logo"
+                        >
+            </a>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 logotipo my-5">
+            <form action="login/" method="POST">
+                {% csrf_token %}
+                <input  type="email" 
+                        name="email" 
+                        id="log_in_usuario" 
+                        placeholder="Correo electronico"
+                        value="{{request.session.user_email_login}}">
+                <input  type="password" 
+                        name="password" 
+                        id="password"
+                        placeholder="Contraseña"
+                        value="{{request.session.user_password_login}}">
+                <button type="submit" class="btn btn-outline-primary">Ingresar</button>
+            </form>
+        </div>
+    </div>
+</nav>

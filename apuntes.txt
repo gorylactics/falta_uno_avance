@@ -1,0 +1,13 @@
+1. como crear un archivo requeriments.txt para declarar las dependencias:
+python -m pip freeze > requirements.txt
+
+2. cuando otra persona necesita utilizarlo para trabajar en el proyecto, primero debe crear un ambiente virtual donde alojara el proyecto (con virtualenv)
+
+virtualenv nombre_entorno
+
+3. leer el archivo requeriments.txt
+pip -m install -r requirements.txt
+
+
+pytnoeste proyecto usa la version de Python 3.9.5
+para el proyecto se necesita crear un entorno virtual e instalar las dependencias
