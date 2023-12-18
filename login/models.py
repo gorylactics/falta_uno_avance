@@ -24,16 +24,6 @@ class UserManager(models.Manager):
             errores['len_password_confirm'] = 'EL password debe tener a lo menos 8 caracteres'
         if (postData['password'] != postData['password_confirm']):
             errores['confirm'] = 'Las Contraseñas no coinciden'
-        
-        #validacion de edad
-        hoyMismo = datetime.date.today()
-        cumpleaños = datetime.datetime.strptime(postData['date_birth'], '%Y-%m-%d').date()
-        if(cumpleaños > hoyMismo):
-            errores['date_birth'] = 'La fecha de nacimiento no puede estar en el futuro'
-        else:
-            print(f'la edad es: {edad_legal}')
-            if edad_legal(cumpleaños) < 16:
-                errores['date_birth'] = 'Debes tener a lo menos 16 años para registrarte.'
         print(errores)
         return errores
 
@@ -44,9 +34,12 @@ class User(models.Model):
     password = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    date_birth = models.DateField()
+    imagen = models.ImageField(upload_to='foto_perfil', help_text='Imagen perfil', verbose_name='Imagen Perfil' , null=True, blank=True)
     objects = UserManager() #este es el validador
+    amigos = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='amigos_rel')
+
+
     def __repr__(self):
-        return f'nombre: {self.first_name}\napellido {self.last_name}\nemail: {self.email}\npassword: {self.password}\nfecha nacimiento {self.date_birth}'
+        return f'nombre: {self.first_name}\napellido {self.last_name}\nemail: {self.email}\npassword: {self.password}'
     def __str__(self):
-        return f'nombre: {self.first_name}\napellido {self.last_name}\nemail: {self.email}\npassword: {self.password}\nfecha nacimiento {self.date_birth}'
+        return f'nombre: {self.first_name}\napellido {self.last_name}\nemail: {self.email}\npassword: {self.password}'

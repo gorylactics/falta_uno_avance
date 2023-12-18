@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+{% load static %}
+    {% if request.session.usuario %}
+        {% include 'menu.html' %}
+    {% endif %}
+
+    <section class="container__fluid">
+        <div class="row">
+            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 perfil">
+                <!-- Contenido del perfil... -->
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 w-100">
+                <h2>Lista de Amigos</h2>
+                {% if amigos %}
+                    <ul>
+                        {% for amigo in amigos %}
+                            <li>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col card card-body">
+                                            <h2>{{ amigo.first_name }} {{ amigo.last_name }}</h2>
+                                            <img src="{{ amigo.foto.url }}" alt="Foto de {{ amigo.first_name }}" width="100" height="100" alt="Foto de {{ amigo.first_name }}" width="100" height="100" alt="Foto de {{ amigo.first_name }}" width="100" height="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No tienes amigos en este momento.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

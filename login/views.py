@@ -10,49 +10,76 @@ def index(request):
         contexto = {'titulo' : 'Login/Registro'}
         return render(request , 'index.html' , contexto)
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User
+
 def registrar(request):
     if request.method == 'GET':
         return redirect('/')
-    if request.method  == 'POST':
+
+    if request.method == 'POST':
         errores = User.objects.validacion(request.POST)
+
         if len(errores) > 0:
-            for key , value in errores.items():
-                messages.warning(request , value)
+            for key, value in errores.items():
+                messages.warning(request, value)
+
             request.session['user_first_name'] = request.POST['first_name']
             request.session['user_last_name'] = request.POST['last_name']
             request.session['user_email'] = request.POST['email']
             request.session['user_password'] = request.POST['password']
             request.session['user_password_confirm'] = request.POST['password_confirm']
-            request.session['user_date_birth'] = request.POST['date_birth']
+
             return redirect('/')
         else:
             encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
             user = User.objects.create(
-                first_name = request.POST['first_name'],
-                last_name = request.POST['last_name'],
-                email = request.POST['email'],
-                password = encriptacion,
-                date_birth = request.POST['date_birth'],
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name'],
+                email=request.POST['email'],
+                password=encriptacion,
             )
-            sesion_de_usuario = {
-                    'id' : user.id,
-                    'nombre' : user.first_name,
-                    'apellido' : user.last_name,
-                    'email' : user.email,
-                    'date_birth' : user.date_birth,
-                    'created_at' : user.created_at.strftime('%Y-%m-%d'),
-                    # aca no se puede guardar un objeto completo , hay que separarlo por partes para que pueda ser tomado
+
+            # Manejar la carga de la imagen
+            imagen = request.FILES.get('imagen')
+            if imagen:
+                # Guardar la imagen en la instancia del usuario
+                user.imagen = imagen
+                user.save()
+                request.session['usuario_imagen_url'] = user.imagen.url
+
+                # Asignar la URL de la imagen a la sesión
+                request.session['usuario'] = {
+                    'id': user.id,
+                    'nombre': user.first_name,
+                    'apellido': user.last_name,
+                    'email': user.email,
+                    'created_at': user.created_at.strftime('%Y-%m-%d'),
+                    'imagen_url': user.imagen.url,  # Agregar la URL de la imagen
                 }
-            print(f'el post es: {request.POST}')
-            request.session['usuario'] = sesion_de_usuario
-            messages.success(request ,'Usuario registrado')
-            request.session['user_first_name'] = '' 
-            request.session['user_last_name'] = '' 
-            request.session['user_email'] = '' 
-            request.session['user_password'] = '' 
-            request.session['user_password_confirm'] = '' 
-            request.session['user_date_birth'] = ''
+
+            else:
+                # Si no hay imagen, asignar los datos del usuario a la sesión sin la URL de la imagen
+                request.session['usuario'] = {
+                    'id': user.id,
+                    'nombre': user.first_name,
+                    'apellido': user.last_name,
+                    'email': user.email,
+                    'created_at': user.created_at.strftime('%Y-%m-%d'),
+                }
+
+            messages.success(request, 'Usuario registrado')
+
+            # Limpiar datos de sesión
+            request.session['user_first_name'] = ''
+            request.session['user_last_name'] = ''
+            request.session['user_email'] = ''
+            request.session['user_password'] = ''
+            request.session['user_password_confirm'] = ''
+            print(request.session)
             return redirect('/success/')
+
 
 def login(request):
     if request.method == 'GET':
@@ -67,8 +94,8 @@ def login(request):
                     'nombre'     : user_logeado.first_name,
                     'apellido'   : user_logeado.last_name,
                     'email'      : user_logeado.email,
-                    'date_birth' : user_logeado.date_birth.strftime('%Y-%m-%d'),
                     'created_at' : user_logeado.created_at.strftime('%Y-%m-%d'),
+                    
                     # aca no se puede guardar un objeto completo , hay que separarlo por partes para que pueda ser tomado
                 }
                 request.session['usuario'] = sesion_de_usuario
@@ -100,9 +127,8 @@ def success(request):
 def logout(request):
     if 'usuario' in request.session:
         del request.session['usuario']
-        return redirect('/')
-    else:
-        return redirect('/')
+    request.session.clear()
+    return redirect('/')
 
 def editar(request , id):
     if 'usuario' in request.session:
@@ -119,7 +145,6 @@ def editar(request , id):
                 request.session['user_email'] = request.POST['email']
                 request.session['user_password'] = request.POST['password']
                 request.session['user_password_confirm'] = request.POST['password_confirm']
-                request.session['user_date_birth'] = request.POST['date_birth']
                 return redirect('/wall')
             else:
                 usuario = User.objects.get(id = id)
@@ -130,7 +155,6 @@ def editar(request , id):
                     usuario.last_name = request.POST['last_name']
                     usuario.email = request.POST['email']
                     usuario.password = encriptacion
-                    usuario.date_birth = request.POST['date_birth']
                     usuario.save()
                     messages.success( request,'Usuario Actualizado')
                     return redirect('/wall')

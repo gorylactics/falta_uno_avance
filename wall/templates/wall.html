@@ -9,13 +9,17 @@
     <div class="row">
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 perfil">
           <div>
-            <img src="{% static '../static/img/avatar_usuario.jpeg' %}" alt="" class="avatar_perfil">
+
+                <p>Ruta de la imagen: {{ request.session.usuario.foto }}</p>
+                <img src="{{ request.session.usuario.imagen.url }}" alt="Foto de perfil">
+
           <div class="nombre">{{request.session.usuario.nombre}} {{request.session.usuario.apellido}}</div>
           </div>
           <div>
             <button type="submit" class="btn btn-outline-primary">Agregar Amigo</button>
             <button type="submit" class="btn btn-outline-primary">Enviar mensaje</button>
             <button type="submit" class="btn btn-outline-primary">Invitar a jugar</button>
+            <a href="{% url 'lista_amigos' %}" class="btn btn-outline-primary">Amigos</a>
           </div>
           <div class="atributos">
             <ul>
@@ -26,9 +30,25 @@
               <li>★★★★★</li>
             </ul>
           </div>
-        
       </div>
     </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <h5>Amigos sugeridos para agregar:</h5>
+                <ul>
+                    {% for amigo in usuarios %}
+                        <li>
+                            {{ amigo.first_name }}&nbsp;{{ amigo.last_name }}
+                            <a href="{% url 'agregar_amigo' amigo.id %}" class="btn btn-success btn-sm">Agregar como amigo</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
   </section>
 <div class="container">
     <div class="row">

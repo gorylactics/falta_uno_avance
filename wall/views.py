@@ -4,23 +4,60 @@ from django.contrib import messages
 from datetime import datetime, time, timedelta
 from django.utils import timezone
 
+
 def wall(request):
     if 'usuario' not in request.session:
         return redirect('/')
     else:
+        usuario = User.objects.get(id=request.session['usuario']['id'])
         mensajes = Mensaje.objects.all().order_by('-created_at')
         cantMensajes = len(mensajes)
         comentarios = Comentario.objects.all()
-        cantComentarios =len(comentarios)
-        usuarios = User.objects.all()
+        cantComentarios = len(comentarios)
+        usuarios = User.objects.exclude(id=request.session['usuario']['id'])  
+        # Excluir al propio usuario de la lista de amigos sugeridos
         contexto = {
-            'mensajes'          : mensajes,
-            'comentarios'       : comentarios, 
-            'usuarios'          : usuarios,
-            'cantMensajes'      : cantMensajes,
-            'cantComentarios'   : cantComentarios,
+            'usuario': usuario,
+            'mensajes': mensajes,
+            'comentarios': comentarios,
+            'usuarios': usuarios,
+            'cantMensajes': cantMensajes,
+            'cantComentarios': cantComentarios,
         }
-        return render(request , 'wall.html' , contexto)
+        return render(request, 'wall.html', contexto)
+
+def agregar_amigo(request, amigo_id):
+    if 'usuario' in request.session:
+        usuario_actual = request.session['usuario']
+        usuario_id = usuario_actual['id']
+        usuario = User.objects.get(id=usuario_id)
+        amigo = User.objects.get(id=amigo_id)
+
+        usuario.amigos.add(amigo)
+        usuario.save()
+
+        messages.success(request, f'Ahora eres amigo de {amigo.first_name} {amigo.last_name}!')
+
+        return redirect('/wall')
+    else:
+        return redirect('/')
+
+def lista_amigos(request):
+    if 'usuario' in request.session:
+        usuario_actual = request.session['usuario']
+        usuario_id = usuario_actual['id']
+        usuario = User.objects.get(id=usuario_id)
+        amigos = usuario.amigos.all()
+
+        contexto = {
+            'titulo': 'Lista de Amigos',
+            'request': request,
+            'amigos': amigos,
+        }
+
+        return render(request, 'lista_amigos.html', contexto)
+    else:
+        return redirect('/')
 
 def crearMensaje(request , id):
     usuario = User.objects.get(id = id)
@@ -60,9 +97,9 @@ def delete(request , id):
 
 
 def muro_jugador(request):
-    if 'usuario' in request.session:
-        usuario_actual =  request.session['usuario']
-        usuario_id = request.session['usuario']['id']
+    usuario_actual = request.session.get('usuario')
+    if usuario_actual:
+        usuario_id = usuario_actual['id']
         print(usuario_actual)
         print(usuario_id)
         mensajes = Mensaje.objects.filter(usuario = usuario_id).order_by('-created_at')

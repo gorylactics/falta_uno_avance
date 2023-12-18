@@ -26,7 +26,7 @@
 <div class="container pt-5">
     <div class="row">
         <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
-            <form action="/registrar/" method="POST" class="formularios_registro ">
+            <form action="/registrar/" method="POST" class="formularios_registro" enctype="multipart/form-data">
                 <h1>Jugador</h1>
                 {% csrf_token %}
                 <input class="form-control" type="text" name="first_name" id="" value="{{request.session.user_first_name}}" placeholder="Nombre">
@@ -34,7 +34,7 @@
                 <input class="form-control" type="email" name="email" id="" value="{{request.session.user_email}}" placeholder="Email">
                 <input class="form-control" type="password" name="password" id="" value="{{request.session.user_password}}" placeholder="Password">
                 <input class="form-control" type="password" name="password_confirm" id="" value="{{request.session.user_password_confirm}}" placeholder="Confirme Password">
-                <input class="form-control" type="date" name="date_birth" id="" placeholder="Fecha de Nacimiento">
+                <input type="file" name="imagen" accept="image/*" class="form-control" id="id_foto">
                 <button type="submit" class="btn btn-outline-primary mt-4 px-5">Registrar</button>
             </form>
         </div>
