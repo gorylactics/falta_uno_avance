@@ -10,8 +10,8 @@
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 perfil">
           <div>
 
-                <p>Ruta de la imagen: {{ request.session.usuario.foto }}</p>
-                <img src="{{ request.session.usuario.imagen.url }}" alt="Foto de perfil">
+                <p>Ruta de la imagen: {{ request.session.usuario.imagen_url }}</p>
+                <img src="{{ request.session.usuario.imagen_url }}" alt="Foto de perfil">
 
           <div class="nombre">{{request.session.usuario.nombre}} {{request.session.usuario.apellido}}</div>
           </div>

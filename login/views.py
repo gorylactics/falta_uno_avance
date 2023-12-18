@@ -17,20 +17,16 @@ from .models import User
 def registrar(request):
     if request.method == 'GET':
         return redirect('/')
-
     if request.method == 'POST':
         errores = User.objects.validacion(request.POST)
-
         if len(errores) > 0:
             for key, value in errores.items():
                 messages.warning(request, value)
-
             request.session['user_first_name'] = request.POST['first_name']
             request.session['user_last_name'] = request.POST['last_name']
             request.session['user_email'] = request.POST['email']
             request.session['user_password'] = request.POST['password']
             request.session['user_password_confirm'] = request.POST['password_confirm']
-
             return redirect('/')
         else:
             encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
@@ -40,25 +36,19 @@ def registrar(request):
                 email=request.POST['email'],
                 password=encriptacion,
             )
-
-            # Manejar la carga de la imagen
             imagen = request.FILES.get('imagen')
             if imagen:
-                # Guardar la imagen en la instancia del usuario
                 user.imagen = imagen
                 user.save()
                 request.session['usuario_imagen_url'] = user.imagen.url
-
-                # Asignar la URL de la imagen a la sesión
                 request.session['usuario'] = {
                     'id': user.id,
                     'nombre': user.first_name,
                     'apellido': user.last_name,
                     'email': user.email,
                     'created_at': user.created_at.strftime('%Y-%m-%d'),
-                    'imagen_url': user.imagen.url,  # Agregar la URL de la imagen
+                    'imagen_url': user.imagen.url,
                 }
-
             else:
                 # Si no hay imagen, asignar los datos del usuario a la sesión sin la URL de la imagen
                 request.session['usuario'] = {
@@ -68,16 +58,14 @@ def registrar(request):
                     'email': user.email,
                     'created_at': user.created_at.strftime('%Y-%m-%d'),
                 }
-
             messages.success(request, 'Usuario registrado')
-
             # Limpiar datos de sesión
             request.session['user_first_name'] = ''
             request.session['user_last_name'] = ''
             request.session['user_email'] = ''
             request.session['user_password'] = ''
             request.session['user_password_confirm'] = ''
-            print(request.session)
+            print(request.session['usuario'])
             return redirect('/success/')
 
 
