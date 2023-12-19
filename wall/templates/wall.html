@@ -9,10 +9,12 @@
     <div class="row">
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 perfil">
           <div>
-
+            {% if request.session.usuario.imagen_url %}
                 <p>Ruta de la imagen: {{ request.session.usuario.imagen_url }}</p>
-                <img src="{{ request.session.usuario.imagen_url }}" alt="Foto de perfil">
-
+                <img src="{{ request.session.usuario.imagen_url }}" alt="Foto de perfil" class="img-fluid imagen_perfil">
+            {% else %}
+                <img src="{% static 'img/avatar_usuario.jpeg' %}" alt="Foto de perfil por defecto">
+            {% endif %}
           <div class="nombre">{{request.session.usuario.nombre}} {{request.session.usuario.apellido}}</div>
           </div>
           <div>

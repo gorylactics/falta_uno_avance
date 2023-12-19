@@ -2,17 +2,14 @@ from django.shortcuts import render , redirect
 from .models import *
 from django.contrib import messages
 import bcrypt
-# import re
+from django.core.files.storage import default_storage
 
+# import re
 
 def index(request):
     if request.method  == 'GET':
         contexto = {'titulo' : 'Login/Registro'}
         return render(request , 'index.html' , contexto)
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import User
 
 def registrar(request):
     if request.method == 'GET':
@@ -40,7 +37,8 @@ def registrar(request):
             if imagen:
                 user.imagen = imagen
                 user.save()
-                request.session['usuario_imagen_url'] = user.imagen.url
+                # request.session['usuario_imagen_url'] = user.imagen.url
+                request.session['usuario']['imagen_url'] = user.imagen.url
                 request.session['usuario'] = {
                     'id': user.id,
                     'nombre': user.first_name,
@@ -72,33 +70,39 @@ def registrar(request):
 def login(request):
     if request.method == 'GET':
         return redirect('/')
-    if request.method  == 'POST':
-        user = User.objects.filter(email = request.POST['email'])
+    if request.method == 'POST':
+        user = User.objects.filter(email=request.POST['email'])
         if user:
             user_logeado = user[0]
-            if bcrypt.checkpw(request.POST['password'].encode() , user_logeado.password.encode()):
+            if bcrypt.checkpw(request.POST['password'].encode(), user_logeado.password.encode()):
                 sesion_de_usuario = {
-                    'id'         : user_logeado.id,
-                    'nombre'     : user_logeado.first_name,
-                    'apellido'   : user_logeado.last_name,
-                    'email'      : user_logeado.email,
-                    'created_at' : user_logeado.created_at.strftime('%Y-%m-%d'),
-                    
-                    # aca no se puede guardar un objeto completo , hay que separarlo por partes para que pueda ser tomado
+                    'id': user_logeado.id,
+                    'nombre': user_logeado.first_name,
+                    'apellido': user_logeado.last_name,
+                    'email': user_logeado.email,
+                    'created_at': user_logeado.created_at.strftime('%Y-%m-%d'),
+                    'imagen_url': user_logeado.imagen.url if user_logeado.imagen else None,
                 }
                 request.session['usuario'] = sesion_de_usuario
-                print(f'la sesion de usuario es: {user_logeado}' )
-                print(f'el post es: {request.POST}')
                 request.session['user_email_login'] = ''
                 request.session['user_password_login'] = ''
+
+                # Limpiar la URL de la imagen anterior si existe
+                if 'usuario_imagen_url' in request.session:
+                    del request.session['usuario_imagen_url']
+
+                # Actualizar la URL de la imagen en la sesión si ha cambiado
+                if 'usuario' in request.session and 'imagen_url' in request.session['usuario']:
+                    request.session['usuario']['imagen_url'] = user_logeado.imagen.url
+
                 return redirect('/success/')
             else:
-                messages.warning(request ,'Contraseña Invalida')
+                messages.warning(request, 'Contraseña Invalida')
                 request.session['user_email_login'] = request.POST['email']
                 request.session['user_password_login'] = request.POST['password']
                 return redirect('/')
         else:
-            messages.warning(request ,'Correo Invalido')
+            messages.warning(request, 'Correo Invalido')
             request.session['user_email_login'] = request.POST['email']
             request.session['user_password_login'] = request.POST['password']
             return redirect('/')
@@ -115,42 +119,86 @@ def success(request):
 def logout(request):
     if 'usuario' in request.session:
         del request.session['usuario']
-    request.session.clear()
+        # Verificar si la clave está presente antes de intentar eliminarla
+        if 'usuario_imagen_url' in request.session:
+            del request.session['usuario_imagen_url']
     return redirect('/')
 
-def editar(request , id):
-    if 'usuario' in request.session:
-        if request.method == 'GET':
-            contexto = {'titulo': 'Editar',}
-            return render(request ,'editar.html')
-        if request.method == 'POST':
-            errores = User.objects.validacion(request.POST)
-            if len(errores) > 0:
-                for key , value in errores.items():
-                    messages.warning(request , value)
-                request.session['user_first_name'] = request.POST['first_name']
-                request.session['user_last_name'] = request.POST['last_name']
-                request.session['user_email'] = request.POST['email']
-                request.session['user_password'] = request.POST['password']
-                request.session['user_password_confirm'] = request.POST['password_confirm']
-                return redirect('/wall')
-            else:
-                usuario = User.objects.get(id = id)
-                usuario_logueado = request.session['usuario']['id']
-                if usuario.id == usuario_logueado:
-                    encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
-                    usuario.first_name = request.POST['first_name']
-                    usuario.last_name = request.POST['last_name']
-                    usuario.email = request.POST['email']
-                    usuario.password = encriptacion
-                    usuario.save()
-                    messages.success( request,'Usuario Actualizado')
-                    return redirect('/wall')
-                else:
-                    print('los usuarios son diferentes')
-                    return redirect('/')
-    else:
+
+def editar(request, id):
+    # Verificar si el usuario está autenticado
+    if 'usuario' not in request.session:
         return redirect('/')
-        print(f'Desde la vista de editar imprimiendo el metodo GET {request.GET}')
-        print(f'Desde la vista de editar imprimiendo el metodo POST {request.POST}')
-        return redirect('/wall/')
+
+    usuario_logueado_id = request.session['usuario']['id']
+
+    # Verificar si el usuario tiene permisos para editar el perfil
+    if request.method == 'GET':
+        # Obtener el usuario a editar
+        usuario = User.objects.get(id=id)
+
+        # Verificar si el usuario logueado tiene permisos para editar este perfil
+        if usuario.id != usuario_logueado_id:
+            messages.warning(request, 'No tienes permisos para editar este perfil.')
+            return redirect('/wall')
+
+        contexto = {
+            'titulo': 'Editar',
+            'usuario': usuario,  # Pasar el objeto usuario al contexto
+        }
+        return render(request, 'editar.html', contexto)
+    
+    if request.method == 'POST':
+        # Obtener el usuario a editar
+        usuario = User.objects.get(id=id)
+        
+        # Verificar si el usuario logueado tiene permisos para editar este perfil
+        if usuario.id != usuario_logueado_id:
+            messages.warning(request, 'No tienes permisos para editar este perfil.')
+            return redirect('/wall')
+
+        # Validar datos del formulario
+        errores = User.objects.validacion(request.POST)
+        if len(errores) > 0:
+            for key, value in errores.items():
+                messages.warning(request, value)
+            
+            return redirect('/editar/' + str(id))  # Redirigir de nuevo al formulario de edición
+        
+        # Actualizar datos del usuario
+        usuario.first_name = request.POST['first_name']
+        usuario.last_name = request.POST['last_name']
+        usuario.email = request.POST['email']
+
+        # Actualizar la contraseña si se proporcionó una nueva
+        if request.POST.get('password'):
+            encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
+            usuario.password = encriptacion
+
+        # Actualizar la imagen si se proporcionó una nueva
+        imagen_nueva = request.FILES.get('imagen')
+        if imagen_nueva:
+            # Eliminar la imagen antigua si existe
+            if usuario.imagen:
+                default_storage.delete(usuario.imagen.name)
+
+            # Guardar la nueva imagen
+            usuario.imagen = imagen_nueva
+
+        usuario.save()
+
+        # Actualizar la sesión con los nuevos datos
+        sesion_de_usuario = {
+            'id': usuario.id,
+            'nombre': usuario.first_name,
+            'apellido': usuario.last_name,
+            'email': usuario.email,
+            'created_at': usuario.created_at.strftime('%Y-%m-%d'),
+            'imagen_url': usuario.imagen.url if usuario.imagen else None,
+        }
+        request.session['usuario'] = sesion_de_usuario
+
+        messages.success(request, 'Usuario actualizado exitosamente.')
+        print(f'Ruta de la imagen actualizada por el usuario (id={usuario.id}): {usuario.imagen.url if usuario.imagen else None}')
+        return redirect('/wall')
+

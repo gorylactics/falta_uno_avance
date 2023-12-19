@@ -34,7 +34,7 @@ class User(models.Model):
     password = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    imagen = models.ImageField(upload_to='foto_perfil', help_text='Imagen perfil', verbose_name='Imagen Perfil' , null=True, blank=True)
+    imagen = models.ImageField(upload_to='foto_perfil', help_text='Imagen perfil', verbose_name='Imagen Perfil' , null=True, blank=True , default='img/avatar_usuario.jpeg')
     objects = UserManager() #este es el validador
     amigos = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='amigos_rel')
 

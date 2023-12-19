@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 {% block titulo%}{{titulo}}{% endblock%}
 {%block contenido%}
-
+{% load static %}
 {%if request.session.usuario%}
     {%include 'menu.html'%}
 {%endif%}
@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-lg-6 offset-3">
             <h1>Editar Datos</h1>
-            <form action="/editar/{{request.session.usuario.id}}" method="POST">
+            <form action="/editar/{{request.session.usuario.id}}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <label class="form-label" for="first_name">First Name</label>
                 <input class="form-control" type="text" name="first_name" id="" value="{{request.session.user_first_name}}">
@@ -21,8 +21,8 @@
                 <input class="form-control" type="password" name="password" id="" value="{{request.session.user_password}}">
                 <label class="form-label" for="password_confirm">Password Confirm</label>
                 <input class="form-control" type="password" name="password_confirm" id="" value="{{request.session.user_password_confirm}}">
-                <label for="date_birth">date_birth</label>
-                <input class="form-control" type="date" name="date_birth" id="">
+                <label class="form-label" for="imagen">Imagen de perfil</label>
+                <input type="file" name="imagen" accept="image/*">
                 <button type="submit" class="btn btn-secondary mt-4 px-5">Actualizar</button>
             </form>
         </div>
