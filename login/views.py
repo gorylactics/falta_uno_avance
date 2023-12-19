@@ -3,6 +3,7 @@ from .models import *
 from django.contrib import messages
 import bcrypt
 from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 # import re
 
@@ -19,12 +20,7 @@ def registrar(request):
         if len(errores) > 0:
             for key, value in errores.items():
                 messages.warning(request, value)
-            request.session['user_first_name'] = request.POST['first_name']
-            request.session['user_last_name'] = request.POST['last_name']
-            request.session['user_email'] = request.POST['email']
-            request.session['user_password'] = request.POST['password']
-            request.session['user_password_confirm'] = request.POST['password_confirm']
-            return redirect('/')
+            # Resto del código para manejar errores
         else:
             encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
             user = User.objects.create(
@@ -35,27 +31,28 @@ def registrar(request):
             )
             imagen = request.FILES.get('imagen')
             if imagen:
+                # Si el usuario proporciona una imagen, la guardamos
                 user.imagen = imagen
                 user.save()
-                # request.session['usuario_imagen_url'] = user.imagen.url
-                request.session['usuario']['imagen_url'] = user.imagen.url
-                request.session['usuario'] = {
-                    'id': user.id,
-                    'nombre': user.first_name,
-                    'apellido': user.last_name,
-                    'email': user.email,
-                    'created_at': user.created_at.strftime('%Y-%m-%d'),
-                    'imagen_url': user.imagen.url,
-                }
             else:
-                # Si no hay imagen, asignar los datos del usuario a la sesión sin la URL de la imagen
-                request.session['usuario'] = {
-                    'id': user.id,
-                    'nombre': user.first_name,
-                    'apellido': user.last_name,
-                    'email': user.email,
-                    'created_at': user.created_at.strftime('%Y-%m-%d'),
-                }
+                # Si no hay imagen proporcionada, asignamos la imagen predeterminada
+                default_image_path = 'img/avatar_usuario.jpeg'
+                default_image_content = default_storage.open(default_image_path).read()
+                content_file = ContentFile(default_image_content)
+                user.imagen.save('avatar_usuario.jpeg', content_file)
+                user.save()
+
+            # Establecer la información del usuario en la sesión
+            sesion_de_usuario = {
+                'id': user.id,
+                'nombre': user.first_name,
+                'apellido': user.last_name,
+                'email': user.email,
+                'created_at': user.created_at.strftime('%Y-%m-%d'),
+                'imagen_url': user.imagen.url if user.imagen else None,
+            }
+            request.session['usuario'] = sesion_de_usuario
+
             messages.success(request, 'Usuario registrado')
             # Limpiar datos de sesión
             request.session['user_first_name'] = ''
@@ -63,8 +60,8 @@ def registrar(request):
             request.session['user_email'] = ''
             request.session['user_password'] = ''
             request.session['user_password_confirm'] = ''
-            print(request.session['usuario'])
             return redirect('/success/')
+
 
 
 def login(request):
@@ -93,19 +90,20 @@ def login(request):
 
                 # Actualizar la URL de la imagen en la sesión si ha cambiado
                 if 'usuario' in request.session and 'imagen_url' in request.session['usuario']:
-                    request.session['usuario']['imagen_url'] = user_logeado.imagen.url
+                    request.session['usuario']['imagen_url'] = user_logeado.imagen.url if user_logeado.imagen else None
 
                 return redirect('/success/')
             else:
-                messages.warning(request, 'Contraseña Invalida')
+                messages.warning(request, 'Contraseña incorrecta. Inténtelo de nuevo.')
                 request.session['user_email_login'] = request.POST['email']
                 request.session['user_password_login'] = request.POST['password']
                 return redirect('/')
         else:
-            messages.warning(request, 'Correo Invalido')
+            messages.warning(request, 'Correo electrónico no válido. Inténtelo de nuevo.')
             request.session['user_email_login'] = request.POST['email']
             request.session['user_password_login'] = request.POST['password']
             return redirect('/')
+
 
 def success(request):
     if 'usuario' in request.session:

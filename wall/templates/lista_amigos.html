@@ -26,7 +26,7 @@
                                     <div class="row">
                                         <div class="col card card-body">
                                             <h2>{{ amigo.first_name }} {{ amigo.last_name }}</h2>
-                                            <img src="{{ amigo.foto.url }}" alt="Foto de {{ amigo.first_name }}" width="100" height="100" alt="Foto de {{ amigo.first_name }}" width="100" height="100" alt="Foto de {{ amigo.first_name }}" width="100" height="100">
+                                            <img src="{{ request.session.usuario.imagen_url }}" alt="Foto de perfil" class="img-fluid imagen_perfil_lista_amigos">
                                         </div>
                                     </div>
                                 </div>
