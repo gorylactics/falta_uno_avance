@@ -1,5 +1,6 @@
 from django.shortcuts import render , redirect
 from .models import *
+# from ..login.models import *
 from django.contrib import messages
 from datetime import datetime, time, timedelta
 from django.utils import timezone
@@ -67,6 +68,19 @@ def crearMensaje(request , id):
     )
     return redirect('/wall')
 
+def mensajes_amigo(request, amigo_id):
+    amigo = get_object_or_404(User, id=amigo_id)
+    mensajes = Mensaje.objects.filter(usuario=amigo).order_by('-created_at')
+    print("Amigo:", amigo)
+    print("Mensajes:", mensajes)
+    contexto = {
+        'amigo': amigo,
+        'mensajes': mensajes,
+    }
+
+    return render(request, 'mensajes_amigo.html', contexto)
+
+
 def crearComentario(request, id):
     mensaje = Mensaje.objects.get(id = id)
     usuario_comentador = User.objects.get(id = request.session['usuario']['id'])
@@ -113,3 +127,17 @@ def muro_jugador(request):
         return render(request, '/muro_jugador', contexto)
     else:
         return redirect('/')
+
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+# from .models import User  # Asegúrate de importar tu modelo de usuario
+
+def perfil_amigo(request, amigo_id):
+    amigo = get_object_or_404(User, id=amigo_id)
+
+    contexto = {
+        'amigo': amigo,
+    }
+
+    return render(request, 'perfil_amigo.html', contexto)

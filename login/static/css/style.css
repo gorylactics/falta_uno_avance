@@ -260,4 +260,15 @@ textarea , button{
 .imagen_perfil_lista_amigos{
     width: 100px;
 }
+
+.lista_amigos_caja{
+    margin: 10px ;
+    border-radius: 15px;
+    background-color: #6a9eda;
+    
+}
+
+.nombre_amigo_lista{
+    color: black;
+}
 /* FALTAUNOOOOOOOOOOOOOOOOOOOOOO */

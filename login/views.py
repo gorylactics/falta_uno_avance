@@ -22,7 +22,7 @@ def registrar(request):
                 messages.warning(request, value)
             # Resto del código para manejar errores
         else:
-            encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt()).decode()
+            encriptacion = bcrypt.hashpw(request.POST['password'].encode('utf-8'), bcrypt.gensalt()).decode()
             user = User.objects.create(
                 first_name=request.POST['first_name'],
                 last_name=request.POST['last_name'],
@@ -170,7 +170,7 @@ def editar(request, id):
 
         # Actualizar la contraseña si se proporcionó una nueva
         if request.POST.get('password'):
-            encriptacion = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
+            encriptacion = bcrypt.hashpw(request.POST['password'].encode('utf-8'), bcrypt.gensalt())
             usuario.password = encriptacion
 
         # Actualizar la imagen si se proporcionó una nueva

@@ -6,35 +6,32 @@
         {% include 'menu.html' %}
     {% endif %}
 
-    <section class="container__fluid">
-        <div class="row">
-            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12 perfil">
-                <!-- Contenido del perfil... -->
-            </div>
-        </div>
-    </section>
 
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3 w-100">
-                <h2>Lista de Amigos</h2>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h2 class="text-center mb-4">Lista de Amigos</h2>
                 {% if amigos %}
-                    <ul>
+                    <ul class="list-group">
                         {% for amigo in amigos %}
-                            <li>
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col card card-body">
-                                            <h2>{{ amigo.first_name }} {{ amigo.last_name }}</h2>
-                                            <img src="{{ request.session.usuario.imagen_url }}" alt="Foto de perfil" class="img-fluid imagen_perfil_lista_amigos">
-                                        </div>
+                        <li class="list-group-item lista_amigos_caja">
+                            <div class="container">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h2 class="nombre_amigo_lista">
+                                            <a href="{% url 'perfil_amigo' amigo.id %}">{{ amigo.first_name }} {{ amigo.last_name }}</a>
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <img src="{{ amigo.imagen.url }}" alt="Foto de perfil" class="img-fluid imagen_perfil_lista_amigos">
                                     </div>
                                 </div>
-                            </li>
+                            </div>
+                        </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>No tienes amigos en este momento.</p>
+                    <p class="text-center">No tienes amigos en este momento.</p>
                 {% endif %}
             </div>
         </div>
