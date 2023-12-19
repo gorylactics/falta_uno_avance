@@ -199,4 +199,3 @@ def editar(request, id):
         messages.success(request, 'Usuario actualizado exitosamente.')
         print(f'Ruta de la imagen actualizada por el usuario (id={usuario.id}): {usuario.imagen.url if usuario.imagen else None}')
         return redirect('/wall')
-
