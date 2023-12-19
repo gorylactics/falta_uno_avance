@@ -20,17 +20,21 @@
         </div>
     </div>
 
-
     <div class="container mt-5">
         <h2 class="text-center mb-4">Mensajes de {{ amigo.first_name }} {{ amigo.last_name }}</h2>
         {% if mensajes %}
             <ul class="list-group">
                 {% for mensaje in mensajes %}
                     <li class="list-group-item">
-  
-                        <h5>El {{mensaje.created_at|date:"d.M.y"}} {{mensaje.usuario.first_name}} dijo:  {{mensaje.id}}</h5>
-                        <p class="text-light mx-3">{{mensaje.mensaje}}</p>
+                        <h5>El {{ mensaje.created_at|date:"d.M.y" }} {{ mensaje.usuario.first_name }} dijo: {{ mensaje.id }}</h5>
+                        <p class="text-light mx-3">{{ mensaje.mensaje }}</p>
                         <small>{{ mensaje.created_at }}</small>
+
+                        {% for comentario in comentarios %}
+                            {% if comentario.mensaje == mensaje %}
+                                <p>Comentario de {{ comentario.usuario.first_name }}: {{ comentario.comentario }}</p>
+                            {% endif %}
+                        {% endfor %}
                     </li>
                 {% endfor %}
             </ul>
@@ -38,9 +42,4 @@
             <p class="text-center">Este amigo no tiene mensajes por el momento.</p>
         {% endif %}
     </div>
-
-
-
-
-    
 {% endblock %}

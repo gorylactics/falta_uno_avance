@@ -4,6 +4,7 @@ from .models import *
 from django.contrib import messages
 from datetime import datetime, time, timedelta
 from django.utils import timezone
+from login.models import User
 
 
 def wall(request):
@@ -68,11 +69,11 @@ def crearMensaje(request , id):
     )
     return redirect('/wall')
 
+
 def mensajes_amigo(request, amigo_id):
     amigo = get_object_or_404(User, id=amigo_id)
     mensajes = Mensaje.objects.filter(usuario=amigo).order_by('-created_at')
-    print("Amigo:", amigo)
-    print("Mensajes:", mensajes)
+    
     contexto = {
         'amigo': amigo,
         'mensajes': mensajes,
@@ -135,9 +136,32 @@ from django.contrib import messages
 
 def perfil_amigo(request, amigo_id):
     amigo = get_object_or_404(User, id=amigo_id)
+    mensajes = Mensaje.objects.filter(usuario=amigo).order_by('-created_at')
+
+    # Imprimir mensajes para verificar
+    for mensaje in mensajes:
+        print(mensaje.mensaje)
 
     contexto = {
         'amigo': amigo,
+        'mensajes': mensajes,
     }
 
     return render(request, 'perfil_amigo.html', contexto)
+
+
+def eliminar_amigo(request, amigo_id):
+    if 'usuario' in request.session:
+        usuario_actual = request.session['usuario']
+        usuario_id = usuario_actual['id']
+        
+        usuario = get_object_or_404(User, id=usuario_id)
+        amigo = get_object_or_404(User, id=amigo_id)
+
+        # Eliminar al amigo
+        usuario.amigos.remove(amigo)
+        usuario.save()
+
+        messages.success(request, f'Has eliminado a {amigo.first_name} {amigo.last_name} de tu lista de amigos.')
+
+    return redirect('lista_amigos')

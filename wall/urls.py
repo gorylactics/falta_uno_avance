@@ -9,8 +9,7 @@ urlpatterns = [
     path('muro_jugador/' , views.muro_jugador , name='muro_usuario'),
     path('agregar_amigo/<int:amigo_id>/', views.agregar_amigo, name='agregar_amigo'),
     path('lista_amigos/', views.lista_amigos, name='lista_amigos'),
-    # path('perfil_amigo/<int:amigo_id>/', views.perfil_amigo, name='perfil_amigo'),
     path('perfil_amigo/<int:amigo_id>/', views.perfil_amigo, name='perfil_amigo'),
-    path('mensajes_amigo/<int:amigo_id>/', views.mensajes_amigo, name='mensajes_amigo'),
+    path('eliminar_amigo/<int:amigo_id>/', views.eliminar_amigo, name='eliminar_amigo'),
 
 ]

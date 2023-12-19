@@ -32,9 +32,9 @@
                 <input class="form-control" type="text" name="first_name" id="" value="{{request.session.user_first_name}}" placeholder="Nombre">
                 <input class="form-control" type="text" name="last_name" id="" value="{{request.session.user_last_name}}" placeholder="Apellido">
                 <input class="form-control" type="email" name="email" id="" value="{{request.session.user_email}}" placeholder="Email">
-                <input class="form-control" type="password" name="password" id="" value="{{request.session.user_password}}" placeholder="Password">
+                <input class="form-control" type="password" name="password" id="" value="{{request.session.user_password}}" placeholder="Password, debe tener a lo menos 8 caracteres">
                 <input class="form-control" type="password" name="password_confirm" id="" value="{{request.session.user_password_confirm}}" placeholder="Confirme Password">
-                <input type="file" name="imagen" accept="image/*" class="form-control" id="id_foto">
+                <input type="file" name="imagen" accept="image/*" class="form-control" id="id_foto" placeholder="Agrega tu imagen de perfil">
                 <button type="submit" class="btn btn-outline-primary mt-4 px-5">Registrar</button>
             </form>
         </div>
