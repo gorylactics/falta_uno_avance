@@ -40,7 +40,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'muro.urls'
+ROOT_URLCONF = 'falta_uno_avance.urls'
 
 TEMPLATES = [
     {
@@ -58,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'muro.wsgi.application'
+WSGI_APPLICATION = 'falta_uno_avance.wsgi.application'
 
 
 # Database
