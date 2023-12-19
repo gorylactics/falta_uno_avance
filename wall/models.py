@@ -1,6 +1,7 @@
 from datetime import timezone
 from django.db import models
-from login.models import User
+from login.models import  User
+
 
 class Mensaje(models.Model):
     usuario = models.ForeignKey(User, related_name='mensajes', on_delete= models.CASCADE)
@@ -28,3 +29,11 @@ class Comentario(models.Model):
         return f'Usuario: {self.usuario}\nMensaje: {self.mensaje}\nComentario: {self.comentario}'
     def __str__(self):
         return f'Usuario: {self.usuario}\nMensaje: {self.mensaje}\nComentario: {self.comentario}'
+
+class Publicacion(models.Model):
+    usuario = models.ForeignKey(User, related_name='publicaciones', on_delete=models.CASCADE)
+    contenido = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Usuario: {self.usuario}, Contenido: {self.contenido[:50]}'

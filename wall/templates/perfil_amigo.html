@@ -10,9 +10,9 @@
             <div class="col-lg-6">
                 <h2 class="text-center mb-4">Perfil de {{ amigo.first_name }} {{ amigo.last_name }}</h2>
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3>{{ amigo.first_name }} {{ amigo.last_name }}</h3>
-                        <p>Email: {{ amigo.email }}</p>
+                        <p style="color: black;">Email: {{ amigo.email }}</p>
                         <img src="{{ amigo.imagen.url }}" alt="Foto de perfil" class="img-fluid imagen_perfil_amigo">
                     </div>
                 </div>
@@ -20,19 +20,19 @@
         </div>
     </div>
 
-    <div class="container mt-5">
+    <div class="container mt-5 mx-5" style="width: 50%;">
         <h2 class="text-center mb-4">Mensajes de {{ amigo.first_name }} {{ amigo.last_name }}</h2>
         {% if mensajes %}
             <ul class="list-group">
                 {% for mensaje in mensajes %}
                     <li class="list-group-item">
-                        <h5>El {{ mensaje.created_at|date:"d.M.y" }} {{ mensaje.usuario.first_name }} dijo: {{ mensaje.id }}</h5>
-                        <p class="text-light mx-3">{{ mensaje.mensaje }}</p>
+                        <h5 class="mb-1">El {{ mensaje.created_at|date:"d.M.y" }} {{ mensaje.usuario.first_name }} dijo: {{ mensaje.id }}</h5>
+                        <p class="text-dark mx-3">{{ mensaje.mensaje }}</p>
                         <small>{{ mensaje.created_at }}</small>
 
                         {% for comentario in comentarios %}
                             {% if comentario.mensaje == mensaje %}
-                                <p>Comentario de {{ comentario.usuario.first_name }}: {{ comentario.comentario }}</p>
+                                <p class="ml-3">Comentario de {{ comentario.usuario.first_name }}: {{ comentario.comentario }}</p>
                             {% endif %}
                         {% endfor %}
                     </li>
@@ -40,6 +40,30 @@
             </ul>
         {% else %}
             <p class="text-center">Este amigo no tiene mensajes por el momento.</p>
+        {% endif %}
+    </div>
+
+    <div class="container mt-5 mx-5" style="width: 50%;">
+        <h2 class="text-center mb-4">Publicaciones en el muro</h2>
+        <form method="post" action="{% url 'perfil_amigo' amigo.id %}" class="mb-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="contenido" class="form-control" rows="3" placeholder="Escribe tu publicación"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Publicar</button>
+        </form>
+    
+        {% if publicaciones %}
+            <ul class="list-group">
+                {% for publicacion in publicaciones %}
+                    <li class="list-group-item">
+                        <h5 class="mb-1">El {{ publicacion.created_at|date:"d.M.y" }} {{ publicacion.usuario.first_name }} dijo:</h5>
+                        <p class="text-dark mx-3">{{ publicacion.contenido }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-center">No hay publicaciones en el muro por el momento.</p>
         {% endif %}
     </div>
 {% endblock %}

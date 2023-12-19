@@ -1,6 +1,5 @@
 from django.shortcuts import render , redirect
 from .models import *
-# from ..login.models import *
 from django.contrib import messages
 from datetime import datetime, time, timedelta
 from django.utils import timezone
@@ -17,7 +16,7 @@ def wall(request):
         comentarios = Comentario.objects.all()
         cantComentarios = len(comentarios)
         usuarios = User.objects.exclude(id=request.session['usuario']['id'])  
-        # Excluir al propio usuario de la lista de amigos sugeridos
+
         contexto = {
             'usuario': usuario,
             'mensajes': mensajes,
@@ -132,13 +131,12 @@ def muro_jugador(request):
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
-# from .models import User  # Asegúrate de importar tu modelo de usuario
+
 
 def perfil_amigo(request, amigo_id):
     amigo = get_object_or_404(User, id=amigo_id)
     mensajes = Mensaje.objects.filter(usuario=amigo).order_by('-created_at')
 
-    # Imprimir mensajes para verificar
     for mensaje in mensajes:
         print(mensaje.mensaje)
 
@@ -157,8 +155,6 @@ def eliminar_amigo(request, amigo_id):
         
         usuario = get_object_or_404(User, id=usuario_id)
         amigo = get_object_or_404(User, id=amigo_id)
-
-        # Eliminar al amigo
         usuario.amigos.remove(amigo)
         usuario.save()
 
