@@ -27,7 +27,7 @@
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="/success"><b>Muro Principal</b></a></li>
                     <li><a class="nav-link active" aria-current="page" href="/editar/{{request.session.usuario.id}}"><b>Editar</b></a></li>
                     <li><a class="nav-link active" aria-current="page" href="{% url 'lista_amigos' %}"><b>Lista de amigos</b></a></li>
-                        
+                    <li><a class="nav-link active" aria-current="page" href="{% url 'usuarios' %}"><b>Usuarios API</b></a></li>   
                     {%else%}
                     <li><a class="nav-link active" aria-current="page" href="/"><b>Registrar</b></a></li>
                     {%endif%}
